@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Oficina de Interfaces</title>
+  <link rel="stylesheet" href="css/estilos.css">
+  <link rel="stylesheet" href="css/telas.css">
+</head>
+<body>
+  <!-- Filtro que simula deuteranopia (usado no laboratório da etapa 2) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <filter id="filtro-deuteranopia" color-interpolation-filters="sRGB">
+      <feColorMatrix type="matrix" values="0.625 0.375 0 0 0  0.7 0.3 0 0 0  0 0.3 0.7 0 0  0 0 0 1 0"/>
+    </filter>
+  </svg>
+
+  <!-- ================= PREPARO ================= -->
+  <section id="tela-preparo" class="tela-app ativa" aria-label="Preparo da partida">
+    <div class="preparo">
+      <div class="preparo-cab">
+        <div class="selo-oficina">🛠️</div>
+        <h1>Oficina de <span>Interfaces</span></h1>
+        <p>Conserte telas cheias de defeitos visuais relacionando cada problema ao conceito certo de cores, tipografia, grid e responsividade.</p>
+      </div>
+
+      <div class="preparo-grade">
+        <fieldset class="bloco largo">
+          <legend>Modo de jogo</legend>
+          <div class="opcoes" data-grupo="modo">
+            <button class="opcao sel" data-valor="colaborativo"><span class="op-ic">🤝</span><b>Colaborativo</b><small>Todos juntos consertando as telas, com uma pontuação única do grupo.</small></button>
+            <button class="opcao" data-valor="competitivo"><span class="op-ic">🏆</span><b>Competitivo</b><small>As equipes se revezam a cada jogada e disputam pontos no placar.</small></button>
+          </div>
+        </fieldset>
+
+        <fieldset class="bloco largo" id="bloco-equipes" hidden>
+          <legend>Equipes</legend>
+          <div class="opcoes mini" data-grupo="qtd">
+            <button class="opcao sel" data-valor="2"><b>2 equipes</b></button>
+            <button class="opcao" data-valor="3"><b>3 equipes</b></button>
+            <button class="opcao" data-valor="4"><b>4 equipes</b></button>
+          </div>
+          <div id="lista-equipes" class="lista-equipes"></div>
+        </fieldset>
+
+        <fieldset class="bloco" id="bloco-dicas">
+          <legend>Dicas</legend>
+          <div class="opcoes" data-grupo="dicas">
+            <button class="opcao sel" data-valor="limitado"><span class="op-ic">💡</span><b>Limitado</b><small class="txt-limite">6 dicas para o grupo.</small></button>
+            <button class="opcao" data-valor="ilimitado"><span class="op-ic">♾️</span><b>Ilimitado</b><small>Dicas sempre disponíveis.</small></button>
+          </div>
+        </fieldset>
+
+        <fieldset class="bloco" id="bloco-tempo">
+          <legend>Tempo por jogada</legend>
+          <div class="opcoes mini" data-grupo="tempo">
+            <button class="opcao sel" data-valor="0"><b>Sem limite</b></button>
+            <button class="opcao" data-valor="60"><b>60 s</b></button>
+            <button class="opcao" data-valor="90"><b>90 s</b></button>
+          </div>
+          <p class="instrucao txt-tempo" style="margin-top:.6rem">No modo colaborativo não há cronômetro.</p>
+        </fieldset>
+      </div>
+
+      <div class="preparo-rodape">
+        <div class="resumo-regras"><span>6 telas</span><span>28 defeitos</span><span>Arraste ou clique</span><span>Funciona offline</span></div>
+        <button id="btn-comecar" class="btn-principal">▶ Começar</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= JOGO ================= -->
+  <section id="tela-jogo" class="tela-app" aria-label="Partida">
+    <header class="barra-topo">
+      <div class="marca">🛠️ Oficina de <span>Interfaces</span></div>
+      <div id="trilha" class="trilha" aria-label="Etapas"></div>
+      <div id="placar" class="placar" aria-live="polite"></div>
+      <div class="acoes-topo">
+        <button id="btn-voltar" class="btn-ico" title="Desfazer a última jogada">↶ Voltar</button>
+        <button id="btn-som" class="btn-ico" title="Ligar ou desligar o som">🔊</button>
+        <button id="btn-tela-cheia" class="btn-ico" title="Tela cheia">⛶</button>
+        <button id="btn-inicio" class="btn-ico" title="Voltar ao início">🏠</button>
+      </div>
+    </header>
+
+    <main class="area-jogo">
+      <section class="coluna-palco">
+        <div class="cab-etapa"><span id="etapa-rotulo" class="rot"></span><h2 id="etapa-titulo"></h2><small id="etapa-produto"></small></div>
+        <div id="palco" class="palco"><div id="palco-interno" class="palco-interno"></div></div>
+        <div id="laboratorio" class="laboratorio"></div>
+      </section>
+
+      <aside id="painel" class="coluna-painel">
+        <div id="faixa-vez" class="faixa-vez"></div>
+        <button id="btn-dica" class="btn-dica">💡 Pedir dica <small id="dicas-restantes"></small></button>
+        <p class="instrucao">Escolha uma <b>carta</b> e solte sobre o <b>número do defeito</b> que ela conserta. Também vale clicar na carta e depois no número.</p>
+        <div id="painel-cartas" class="cartas" aria-label="Cartas de conceito"></div>
+        <div id="observacao" class="observacao" aria-live="polite"></div>
+      </aside>
+    </main>
+  </section>
+
+  <!-- ================= FINAL ================= -->
+  <section id="tela-final" class="tela-app" aria-label="Resultado"></section>
+
+  <!-- Camadas flutuantes -->
+  <div id="camada-modal" class="camada-modal" role="dialog" aria-modal="true"></div>
+  <div id="tut-furo" class="tut-furo"></div>
+  <div id="tut-balao" class="tut-balao" role="dialog" aria-live="polite"></div>
+  <div id="aviso-vez" class="aviso-vez"></div>
+  <div id="toast" class="toast" role="status"></div>
+  <div id="carta-fantasma" class="carta-fantasma"></div>
+
+  <script src="js/dados.js"></script>
+  <script src="js/telas.js"></script>
+  <script src="js/jogo.js"></script>
+</body>
+</html>
